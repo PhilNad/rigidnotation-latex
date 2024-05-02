@@ -1,0 +1,363 @@
+% \iffalse meta-comment
+%
+% Copyright (C) 2024 Philippe Nadeau
+% --------------------------------
+%
+% This file may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in:
+%
+% http://www.latex-project.org/lppl.txt
+%
+% and version 1.3c or later is part of all distributions of LaTeX
+% version 2008-05-04 or later.
+%
+% \fi
+%
+% \iffalse
+%<package>\NeedsTeXFormat{LaTeX2e}
+%<package>\ProvidesPackage{rigidnotation}[2024/05/13 1.0.0 Rigid Notation]
+%
+%<*driver>
+\documentclass{ltxdoc}
+% This package is required to build its own documentation!
+\usepackage{rigidnotation}
+\NewRigidNotation{Vel}{v}
+\NewRigidNotation{Acc}{a}
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\begin{document}
+\DocInput{rigidnotation.dtx}
+\end{document}
+%</driver>
+% \fi
+%
+%
+% \def\oargument#1{\texttt{[\meta{#1}]}}
+% \def\margument#1{\texttt{\{\meta{#1}\}}}
+%
+%
+% \changes{v1.0}{2024-05-13}{Initial version}
+%
+% \GetFileInfo{rigidnotation.sty}
+%
+% \DoNotIndex{}
+%
+% \title{The \textsf{rigidnotation} package\thanks{This document
+% corresponds to \textsf{rigidnotation}~\fileversion,
+% dated \filedate.}}
+% \author{Philippe Nadeau \\ \texttt{philippe.nadeau [at] robotics.utias.utoronto.ca}}
+%
+% \maketitle
+%
+% \begin{abstract}
+% This package provides \LaTeX\ macros to easily and concisely typeset vectors and matrices in a flexible way such as to follow the RIGID notation convention defined in \url{ARXIV DOCUMENT URL}. The package enables the user to define custom commands that can then be used in any math-mode environment to efficiently and rigorously typeset the notational elements commonly used in robotics research (and many other fields) for position vectors, rotation matrices, pose matrices, etc.
+% \end{abstract}
+%
+% \section{Introduction}
+% A useful typesetting system should reduce to a minimum the number of keystrokes required by the user while enabling a flexible usage of the system and cater to various needs. This is the philosophy behind this package.
+%
+% This package makes it easy to typeset vectors and matrices following the RIGID convention \url{ARXIV DOCUMENT URL}, which is compliant with the \textit{ISO 800000 Standard on Quantities and Units}. To do so, this package defines a \textit{command factory} that can be used to concisely generate multiple commands, each one dedicated to a user-defined quantity (e.g. position vector, velocity vector, rotation matrix). The user can then call the generated commands within math-mode environments to typeset a concise representation of the quantity.
+%
+% For instance, |\Pos[\dot]{s}{b}{w}\Transposed| produces
+% \begin{equation*} 
+%  \resizebox{1cm}{!}{$\Pos[\dot]{s}{b}{w}\Transposed$}
+% \end{equation*}
+% which very concisely represents the time-derivative of the position vector of subject $s$ with respect to basis $b$ when expressed in coordinate system $w$. When typing the keystrokes, the user can think: \textit{position of $s$ with respect to $b$ expressed in $w$, transposed}. Except for the accent, the order in which the elements are typed respects the order in which they can be spoken, making it easier to remember the order of the arguments.  
+%
+% The \textit{subject} of a quantity is the elements to which the quantity pertains (e.g. the orientation of the subject, the velocity of the subject). The \textit{basis} is the element relative to which the quantity is observed/measured/defined (e.g. the velocity of the car/subject relative to the train/basis). A vector quantity is commonly pictured as an arrow pointing from the basis to the subject. To facilitate computations, quantities are \textit{expressed} in a \textit{coordinate system} such that they can be represented as a set of numbers. Sometime it makes sense to specify only a subset of the four elements: quantity, subject, basis, and coordinate system. This package allows the user to specify only the necessary elements. A \textit{concise mode} can also be enabled such that when the basis and coordinate system are the same, only the basis is denoted.
+%
+% \section{Usage}
+% The typical usage of the package involves defining quantities of interest in the preamble, like 
+% \begin{verbatim}
+%   \usepackage{rigidnotation}
+%   \NewRigidNotation{Vel}{v} % Velocity
+%   \NewRigidNotation{Acc}{a} % Acceleration
+%   % Whether the concise notation is desired
+%   \SetConciseNotation{\BooleanTrue}
+% \end{verbatim}
+% in which quantities representing velocities and accelerations are defined. Then, in any math-mode environment, variations of the following commands can be used:
+% \begin{verbatim}
+%   \begin{equation*}
+%     1:\Vel \quad 
+%     2:\Vel[\hat] \quad
+%     3:\Vel[\ddot]{s} \quad 
+%     4:\SetConciseNotation \Vel{s}{b}{b} \quad
+%     5:\Vel{s}{b}{c} \quad
+%     6:\UnsetConciseNotation \Vel{s}{b}{b} \quad
+%     7:\Acc{s}{b}\Transposed \quad 
+%     8:\Acc{s}{b}^2 \quad
+%     9:\Rot{s}{b}\Inversed \quad 
+%   \end{equation*}
+% \end{verbatim}
+% to produce
+% \begin{equation*}
+%     1:\Vel \quad 
+%     2:\Vel[\hat] \quad
+%     3:\Vel[\ddot]{s} \quad 
+%     4:\SetConciseNotation \Vel{s}{b}{b} \quad
+%     5:\Vel{s}{b}{c} \quad
+%     6:\UnsetConciseNotation \Vel{s}{b}{b} \quad
+%     7:\Acc{s}{b}\Transposed \quad 
+%     8:\Acc{s}{b}^2 \quad
+%     9:\Rot{s}{b}\Inversed \quad 
+%   \end{equation*}
+% where the concise notation was enabled for items 4 and 5 but disabled for element 6 (notice the difference). Also note that command |\Rot| was used even though it was not defined in the preamble. This is because the package comes with a few pre-defined quantities: |\Pos|, |\Rot|, and |\Pose|.
+%
+% \subsection{Commands}
+% In the following, arguments surrounded by square brackets are optional while those surrounded by curly brackets are mandatory like \oargument{optional} and \margument{mandatory} respectively.
+%
+% \vspace{5mm}\DescribeMacro{\NewRigidNotation}
+% \hspace{-6.5mm} \textbf{Arguments}:
+% \begin{enumerate}
+%   \item \margument{name}: Name of the command to create.
+%   \item \margument{symbol}: Symbol used to represent the quantity.
+% \end{enumerate}
+% \textbf{Description}:\\
+% Define a new command that can be used to typeset a physical or mathematical quantity according to the RIGID convention.
+% For instance, |\NewRigidNotation{Pos}{p}| can be used to create a new command |\Pos| for typesetting position vectors, with the |p| symbol being used to represent the quantity. After it has been defined, the new command can be used with the following arguments:
+% \begin{enumerate}
+%   \item \oargument{accent}: Command to put an accent over the letter (e.g. |\hat|).
+%   \item \oargument{subject}: The symbol of the \textit{subject} (e.g. vector endpoint).
+%   \item \oargument{basis}: The symbol of the \textit{basis} (e.g. vector origin).
+%   \item \oargument{coord}: Symbol for the coordinate system potentially used.
+% \end{enumerate}
+% Hence, this is a kind of meta-command or command factory: |\NewRigidNotation| creates a new command that can be used with arguments. 
+%For instance, calling |\NewRigidNotation{Pos}{p}| defines a new command |\Pos| that can be used with zero or more arguments, as in  |\Pos[\dot]{a}{b}{c}|, in which |a| is the subject symbol, |b| is the basis symbol, |c| is the coordinate system, and a dot ($\cdot$) will be placed above the |p| in the notation, producing $\Pos[\dot]{a}{b}{c}$.
+%
+% \vspace{5mm}\DescribeMacro{\SetConciseNotation}
+% \hspace{-6.5mm} \textbf{Arguments}:
+% \begin{enumerate}
+%   \item \oargument{bool}: Either |\BooleanTrue| or |\BooleanFalse|.
+% \end{enumerate}
+% \textbf{Description}:\\
+% Sets whether to use the concise notation that omits to state the coordinate system when the basis and coordinate systems are the same. Calling |\SetConciseNotation| with no argument will enable the concise notation, which is the same as |\SetConciseNotation{\BooleanTrue}|. Note that, although the argument is optional, curly brackets are used.
+% Also note that the concise notation can be enabled/disabled multiple times throughout the document.
+%
+% \vspace{5mm}\DescribeMacro{\UnsetConciseNotation}
+% \hspace{-6.5mm} \textbf{Arguments}: None.\\
+% \textbf{Description}:\\
+% Informs the package that the concise notation should not be used. This is equivalent to |\SetConciseNotation{\BooleanFalse}| and is the default behaviour.
+%
+% \vspace{5mm}\DescribeMacro{\Transposed}
+% \hspace{-6.5mm} Macro that typesets a $\cdot^\mathsf{T}$ in the right super-script position to denote the transpose\
+% as in $\Pos{a}{b}{c}\Transposed$.
+%
+% \vspace{5mm}\DescribeMacro{\Inversed}
+% \hspace{-6.5mm} Macro that typesets a $\cdot^{-1}$ in the right super-script position to denote the inverse\
+% as in $\Pos{a}{b}{c}\Inversed$.
+%
+% \vspace{5mm}\DescribeMacro{\Hermitian}
+% \hspace{-6.5mm} Macro that typesets a $\cdot^\mathsf{H}$ in the right super-script position to denote the Hermitian\
+% as in $\Rot{a}{b}\Hermitian$.
+%
+% \vspace{5mm}\DescribeMacro{\ComplexConjugate}
+% \hspace{-6.5mm} Macro that typesets a $\cdot^\ast$ in the right super-script position to denote the complex conjugate\
+% as in $\Pos\ComplexConjugate$.
+%
+% \MaybeStop{}
+%
+% \section{Implementation}
+%
+% \begin{macro}{\SetConciseNotation}
+% Defines whether the concise notation is used or not.
+% When used the concise notation will ommit mentionning
+% the reference frame when the source and reference are the same.
+%
+% To use the concise notation, either call |\SetConciseNotation|
+% with no argument or with |\SetConciseNotation{\BooleanTrue}|.
+%    \begin{macrocode}
+\usepackage{xparse}
+\usepackage{mathtools}
+\NewDocumentCommand{\SetConciseNotation}{g}%
+{%
+    \newif\IfRN@C
+    \IfNoValueTF{#1}%
+    {%
+        \RN@Ctrue%
+    }%
+    {%
+        \IfBooleanTF{#1}%
+        {%
+            \RN@Ctrue%
+        }%
+        {%
+            \RN@Cfalse%
+        }%
+    }%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\UnsetConciseNotation}
+% Disables the concise notation.
+% This is equivalent to |\SetConciseNotation{\BooleanFalse}|.
+%    \begin{macrocode}
+\def\UnsetConciseNotation{\SetConciseNotation{\BooleanFalse}}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\RN@makecmd}
+% \textbf{Arguments}:
+% \begin{enumerate}
+%   \item \oargument{accent}: Command to put an accent over the letter (e.g. |\hat|).
+%   \item \margument{qty}: Symbol for the quantity to represent. 
+%   \item \oargument{subject}: The symbol of the \textit{subject} (e.g. vector endpoint).
+%   \item \oargument{basis}: The symbol of the \textit{basis} (e.g. vector origin).
+%   \item \oargument{coord}: Symbol for the coordinate system potentially used.
+% \end{enumerate}
+% \textbf{Description}:\\
+% Defines a typesetting command from arguments. Main typesetting routine that should not be needed by the end-user. Instead, the end-user should use |\NewRigidNotation| to define typesetting commands. If the basis and coordinate system are the same, the coordinate system is omitted when the |RN@C| keyword is set.
+%    \begin{macrocode}
+\NewDocumentCommand{\RN@makecmd}{omggg}%
+{%
+    \IfNoValueTF{#1}{\def\RN@symb{\boldsymbol{#2}}}{\def\RN@symb{#1{\boldsymbol{#2}}}}%
+    \IfNoValueTF{#3}%
+    {%subject is not specified
+        \IfNoValueTF{#4}%
+        {%basis is not specified
+            \IfNoValueTF{#5}%
+            {%subject, basis and coordinate system are not specified
+                \RN@symb%
+            }%
+            {%subject and basis are not specified, coordinate system is specified
+                \RN@symb_{#5}%
+                \prescript{#5}{}{\RN@symb}%
+            }%
+        }%
+        {%basis is specified
+            \IfNoValueTF{#5}%
+            {%basis is specified, subject and coordinate system are not specified
+                \prescript{}{#4}{\RN@symb}%
+            }%
+            {%basis and coordinate system are specified, subject is not specified
+                \IfEq{#4}{#5}%
+                {%
+                    \IfRN@C%
+                    {%basis and coordinate system are the same and RN@C is set
+                        \prescript{}{#4}{\RN@symb}%
+                    }%
+                    {%
+                        \prescript{#5}{#4}{\RN@symb}%
+                    }%
+                }%
+                {%
+                    \prescript{#5}{#4}{\RN@symb}%
+                }%
+            }%
+        }%
+    }%
+    {%subject is specified
+        \IfNoValueTF{#4}%
+        {%basis is not specified
+            \IfNoValueTF{#5}%
+            {%subject is specified, basis and coordinate system are not specified
+                \prescript{}{}{\RN@symb}\hspace{-0.5ex}\prescript{}{#3}{}%
+            }%
+            {%basis is not specified, subject and coordinate system are specified
+                \prescript{#5}{}{\RN@symb}\hspace{-0.5ex}\prescript{}{#3}{}%
+            }%
+        }%
+        {%basis is specified
+            \IfNoValueTF{#5}%
+            {%subject and basis are specified, coordinate system is not specified
+                \prescript{}{#4}{\RN@symb}\hspace{-0.5ex}\prescript{}{#3}{}%
+            }%
+            {%subject, basis, and coordinate system are specified
+                \def\RN@argfour{#4}%
+                \def\RN@argfive{#5}%
+                \ifx\RN@argfour\RN@argfive%
+                {%
+                    \IfRN@C%
+                    {%basis and coordinate system are the same and RN@C is set
+                        \prescript{}{#4}{\RN@symb}\hspace{-0.5ex}\prescript{}{#3}{}%
+                    }%
+                    \else%
+                    {%
+                        \prescript{#5}{#4}{\RN@symb}\hspace{-0.5ex}\prescript{}{#3}{}%
+                    }%
+                    \fi%
+                }%
+                \else%
+                {%
+                    \prescript{#5}{#4}{\RN@symb}\hspace{-0.5ex}\prescript{}{#3}{}%
+                }%
+                \fi%
+            }%
+        }%
+    }
+    %If the following command is an exponent-type command, we bring it closer to the symbol
+    \@ifnextchar^{\hspace{-1ex}}{}%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\NewRigidNotation}
+% \textbf{Arguments}:
+% \begin{enumerate}
+%   \item \margument{cmd}: New command name.
+%   \item \margument{sym}: Symbol for the quantity to represent.
+% \end{enumerate}
+% \textbf{Description}:
+% Defines a new command that can be used to typeset the given symbol using the RIGID convention.
+% This essentially expands |\NewRigidNotation{cmd}{sym}| into |\NewDocumentCommand{cmd}{oggg}{\RN@makecmd[#1]{sym}{#2}{#3}{#4}}| such that |\cmd| can be used afterward with up to four arguments.
+%    \begin{macrocode}
+\NewDocumentCommand{\NewRigidNotation}{mm}%
+{%
+    \expandafter\NewDocumentCommand\csname #1\endcsname{oggg}%
+    {%
+        \expandafter\csname RN@makecmd\endcsname[##1]{#2}{##2}{##3}{##4}%
+    }%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\Transposed}
+% Macro that typesets a $\mathsf{T}$ in the right super-script position, closer to the quantity than normal, and with a smaller font size.
+%    \begin{macrocode}
+\def\Transposed{^{\hspace{-1ex}\scriptscriptstyle\mathsf{T}}}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\Inversed}
+% Macro that typesets a $\mathsf{-1}$ in the right super-script position, closer to the quantity than normal, and with a smaller font size.
+%    \begin{macrocode}
+\def\Inversed{^{\hspace{-1ex}\scriptscriptstyle{-1}}}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\Hermitian}
+% Macro that typesets a $\mathsf{H}$ in the right super-script position, closer to the quantity than normal, and with a smaller font size.
+%    \begin{macrocode}
+\def\Hermitian{^{\hspace{-1ex}\scriptscriptstyle\mathsf{H}}}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\ComplexConjugate}
+% Macro that typesets a $\ast$ in the right super-script position, closer to the quantity than normal, and with a smaller font size.
+%    \begin{macrocode}
+\def\ComplexConjugate{^{\scriptscriptstyle\ast}}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{Default settings}
+% By default, the following commonly used commands are provided. They are used to typeset position vectors, rotation matrices and pose matrices respectively. By default, the concise notation is disabled.
+%    \begin{macrocode}
+\NewRigidNotation{Pos}{p}
+\NewRigidNotation{Rot}{R}
+\NewRigidNotation{Pose}{T}
+\UnsetConciseNotation
+%    \end{macrocode}
+% \end{macro}
+%
+% \Finale
+\endinput
