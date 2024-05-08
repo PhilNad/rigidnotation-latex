@@ -18,103 +18,169 @@
 \ProvidesPackage{rigidnotation}[2024/05/13 1.0.0 Rigid Notation]
 \usepackage{xparse}
 \usepackage{mathtools}
-\NewDocumentCommand{\SetConciseNotation}{g}%
-{%
+
+\newsavebox{\RN@postbox}
+\newlength{\RN@postboxwd}
+
+\NewDocumentCommand{\SetConciseNotation}{g}
+{
     \newif\IfRN@C
-    \IfNoValueTF{#1}%
-    {%
-        \RN@Ctrue%
-    }%
-    {%
-        \IfBooleanTF{#1}%
-        {%
-            \RN@Ctrue%
-        }%
-        {%
-            \RN@Cfalse%
-        }%
-    }%
+    \IfNoValueTF{#1}
+    {
+        \RN@Ctrue
+    }
+    {
+        \IfBooleanTF{#1}
+        {
+            \RN@Ctrue
+        }
+        {
+            \RN@Cfalse
+        }
+    }
 }
 \def\UnsetConciseNotation{\SetConciseNotation{\BooleanFalse}}
-\NewDocumentCommand{\RN@makecmd}{omggg}%
-{%
-    \IfNoValueTF{#1}{\def\RN@symb{\boldsymbol{#2}}}{\def\RN@symb{#1{\boldsymbol{#2}}}}%
-    \IfNoValueTF{#3}%
+\NewDocumentCommand{\RN@makecmd}{omggg}
+{
+    \def\RN@prespace{0.08em}
+    \def\RN@postspace{0.26em}
+    \IfNoValueTF{#1}{\def\RN@symb{\boldsymbol{#2}}}{\def\RN@symb{#1{\boldsymbol{#2}}}}
+    \IfNoValueTF{#3}
     {%subject is not specified
-        \IfNoValueTF{#4}%
+        \IfNoValueTF{#4}
         {%basis is not specified
-            \IfNoValueTF{#5}%
+            \IfNoValueTF{#5}
             {%subject, basis and coordinate system are not specified
-                \RN@symb%
-            }%
+                \RN@symb
+            }
             {%subject and basis are not specified, coordinate system is specified
-                \RN@symb_{#5}%
-                \prescript{#5}{}{\RN@symb}%
-            }%
-        }%
+                \hspace{\RN@prespace}
+                \prescript{#5}{}{
+                    \hspace{-\RN@prespace}
+                    \RN@symb
+                }
+            }
+        }
         {%basis is specified
             \IfNoValueTF{#5}%
             {%basis is specified, subject and coordinate system are not specified
-                \prescript{}{#4}{\RN@symb}%
-            }%
+                \hspace{\RN@prespace}
+                \prescript{}{#4}{
+                    \hspace{-\RN@prespace}
+                    \RN@symb
+                }
+            }
             {%basis and coordinate system are specified, subject is not specified
-                \IfEq{#4}{#5}%
-                {%
-                    \IfRN@C%
+                \IfEq{#4}{#5}
+                {
+                    \IfRN@C
                     {%basis and coordinate system are the same and RN@C is set
-                        \prescript{}{#4}{\RN@symb}%
-                    }%
-                    {%
-                        \prescript{#5}{#4}{\RN@symb}%
-                    }%
-                }%
-                {%
-                    \prescript{#5}{#4}{\RN@symb}%
-                }%
-            }%
-        }%
-    }%
-    {%subject is specified
-        \IfNoValueTF{#4}%
-        {%basis is not specified
-            \IfNoValueTF{#5}%
-            {%subject is specified, basis and coordinate system are not specified
-                \prescript{}{}{\RN@symb}\hspace{-0.5ex}\prescript{}{#3}{}%
-            }%
-            {%basis is not specified, subject and coordinate system are specified
-                \prescript{#5}{}{\RN@symb}\hspace{-0.5ex}\prescript{}{#3}{}%
-            }%
-        }%
-        {%basis is specified
-            \IfNoValueTF{#5}%
-            {%subject and basis are specified, coordinate system is not specified
-                \prescript{}{#4}{\RN@symb}\hspace{-0.5ex}\prescript{}{#3}{}%
-            }%
-            {%subject, basis, and coordinate system are specified
-                \def\RN@argfour{#4}%
-                \def\RN@argfive{#5}%
-                \ifx\RN@argfour\RN@argfive%
-                {%
-                    \IfRN@C%
-                    {%basis and coordinate system are the same and RN@C is set
-                        \prescript{}{#4}{\RN@symb}\hspace{-0.5ex}\prescript{}{#3}{}%
-                    }%
-                    \else%
-                    {%
-                        \prescript{#5}{#4}{\RN@symb}\hspace{-0.5ex}\prescript{}{#3}{}%
-                    }%
-                    \fi%
-                }%
-                \else%
-                {%
-                    \prescript{#5}{#4}{\RN@symb}\hspace{-0.5ex}\prescript{}{#3}{}%
-                }%
-                \fi%
-            }%
-        }%
+                        \hspace{\RN@prespace}
+                        \prescript{}{#4}{
+                            \hspace{-\RN@prespace}
+                            \RN@symb
+                        }
+                    }
+                    {
+                        \hspace{\RN@prespace}
+                        \prescript{#5}{#4}{
+                            \hspace{-\RN@prespace}
+                            \RN@symb
+                        }
+                    }
+                }
+                {
+                    \hspace{\RN@prespace}
+                    \prescript{#5}{#4}{
+                        \hspace{-\RN@prespace}
+                        \RN@symb
+                    }
+                }
+            }
+        }
+        %If there is no subject, no space is needed on the right of the symbol
+        \setlength{\RN@postboxwd}{0pt}
     }
-    %If the following command is an exponent-type command, we bring it closer to the symbol
-    \@ifnextchar^{\hspace{-1ex}}{}%
+    {%subject is specified
+        \IfNoValueTF{#4}
+        {%basis is not specified
+            \IfNoValueTF{#5}
+            {%subject is specified, basis and coordinate system are not specified
+                \RN@symb
+                \hspace{-\RN@postspace}
+                \prescript{}{#3}{}
+            }
+            {%basis is not specified, subject and coordinate system are specified
+                \hspace{\RN@prespace}
+                \prescript{#5}{}{
+                    \hspace{-\RN@prespace}
+                    \RN@symb
+                }
+                \hspace{-\RN@postspace}
+                \prescript{}{#3}{}
+            }
+        }
+        {%basis is specified
+            \IfNoValueTF{#5}
+            {%subject and basis are specified, coordinate system is not specified
+                \hspace{\RN@prespace}
+                \prescript{}{#4}{
+                    \hspace{-\RN@prespace}
+                    \RN@symb
+                }
+                \hspace{-\RN@postspace}
+                \prescript{}{#3}{}
+            }
+            {%subject, basis, and coordinate system are specified
+                \def\RN@argfour{#4}
+                \def\RN@argfive{#5}
+                \ifx\RN@argfour\RN@argfive
+                {
+                    \IfRN@C
+                    {%basis and coordinate system are the same and RN@C is set
+                        \hspace{\RN@prespace}
+                        \prescript{}{#4}{
+                            \hspace{-\RN@prespace}
+                            \RN@symb
+                        }
+                        \hspace{-\RN@postspace}
+                        \prescript{}{#3}{}
+                    }
+                    \else
+                    {
+                        \hspace{\RN@prespace}
+                        \prescript{#5}{#4}{
+                            \hspace{-\RN@prespace}
+                            \RN@symb
+                        }
+                        \hspace{-\RN@postspace}
+                        \prescript{}{#3}{}
+                    }
+                    \fi
+                }
+                \else
+                {
+                    \hspace{\RN@prespace}
+                    \prescript{#5}{#4}{
+                        \hspace{-\RN@prespace}
+                        \RN@symb
+                    }
+                    \hspace{-\RN@postspace}
+                    \prescript{}{#3}{}
+                }
+                \fi
+            }
+        }
+        %If there is a subject, we need to know the width
+        %of the symbol to bring the exponent closer
+        \sbox{\RN@postbox}{$#3$}
+        \setlength{\RN@postboxwd}{\wd\RN@postbox}
+        \addtolength{\RN@postboxwd}{-2pt}
+    }
+    %If the following command is an exponent-type command,
+    %we bring it closer to the symbol.
+    %The next line has to be the last of the macro
+    \@ifnextchar^{\hspace{-\RN@postboxwd}}{}
 }
 \NewDocumentCommand{\NewRigidNotation}{mm}%
 {%
@@ -123,10 +189,46 @@
         \expandafter\csname RN@makecmd\endcsname[##1]{#2}{##2}{##3}{##4}%
     }%
 }
-\def\Transposed{^{\hspace{-1ex}\scriptscriptstyle\mathsf{T}}}
-\def\Inversed{^{\hspace{-1ex}\scriptscriptstyle{-1}}}
-\def\Hermitian{^{\hspace{-1ex}\scriptscriptstyle\mathsf{H}}}
-\def\ComplexConjugate{^{\scriptscriptstyle\ast}}
+\def\Tran{%
+    \ifnum \RN@postboxwd>0%
+        \hspace{-\RN@postboxwd}%
+        \mathmakebox[\RN@postboxwd][l]{%
+            {}^{\scriptscriptstyle\mathsf{T}}%
+        }%
+    \else%
+        ^{\scriptscriptstyle\mathsf{T}}%
+    \fi%
+}
+\def\Inv{%
+    \ifnum \RN@postboxwd>0%
+        \hspace{-\RN@postboxwd}%
+        \mathmakebox[\RN@postboxwd][l]{%
+            {}^{\scriptscriptstyle{-1}}%
+        }%
+    \else%
+        ^{\scriptscriptstyle{-1}}%
+    \fi%
+}
+\def\Herm{%
+    \ifnum \RN@postboxwd>0%
+        \hspace{-\RN@postboxwd}%
+        \mathmakebox[\RN@postboxwd][l]{%
+            {}^{\scriptscriptstyle\mathsf{H}}%
+        }%
+    \else%
+        ^{\scriptscriptstyle\mathsf{H}}%
+    \fi%
+}
+\def\Conj{%
+    \ifnum \RN@postboxwd>0%
+        \hspace{-\RN@postboxwd}%
+        \mathmakebox[\RN@postboxwd][l]{%
+            {}^{\scriptscriptstyle\ast}%
+        }%
+    \else%
+        ^{\scriptscriptstyle\ast}%
+    \fi%
+}
 \NewRigidNotation{Pos}{p}
 \NewRigidNotation{Rot}{R}
 \NewRigidNotation{Pose}{T}

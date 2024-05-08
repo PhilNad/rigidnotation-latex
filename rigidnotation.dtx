@@ -25,6 +25,10 @@
 \usepackage{rigidnotation}
 \NewRigidNotation{Vel}{v}
 \NewRigidNotation{Acc}{a}
+\NewRigidNotation{Mm}{M}
+\NewRigidNotation{Ww}{W}
+\setlength{\fboxsep}{0pt}
+\setlength{\fboxrule}{0.1pt}
 \EnableCrossrefs
 \CodelineIndex
 \RecordChanges
@@ -53,19 +57,19 @@
 % \maketitle
 %
 % \begin{abstract}
-% This package provides \LaTeX\ macros to easily and concisely typeset vectors and matrices in a flexible way such as to follow the RIGID notation convention defined in \url{ARXIV DOCUMENT URL}. The package enables the user to define custom commands that can then be used in any math-mode environment to efficiently and rigorously typeset the notational elements commonly used in robotics research (and many other fields) for position vectors, rotation matrices, pose matrices, etc.
+% This package provides \LaTeX\ macros to easily and concisely typeset vectors and matrices in a flexible way such as to follow the RIGID notation convention. The package enables the user to define custom commands that can then be used in any math-mode environment to efficiently and rigorously typeset the notational elements commonly used in robotics research (and many other fields) for position vectors, rotation matrices, pose matrices, etc.
 % \end{abstract}
 %
 % \section{Introduction}
 % A useful typesetting system should reduce to a minimum the number of keystrokes required by the user while enabling a flexible usage of the system and cater to various needs. This is the philosophy behind this package.
 %
-% This package makes it easy to typeset vectors and matrices following the RIGID convention \url{ARXIV DOCUMENT URL}, which is compliant with the \textit{ISO 800000 Standard on Quantities and Units}. To do so, this package defines a \textit{command factory} that can be used to concisely generate multiple commands, each one dedicated to a user-defined quantity (e.g. position vector, velocity vector, rotation matrix). The user can then call the generated commands within math-mode environments to typeset a concise representation of the quantity.
+% This package makes it easy to typeset vectors and matrices following the RIGID convention, which is compliant with the \textit{ISO 800000 Standard on Quantities and Units}. To do so, this package defines a \textit{command factory} that can be used to concisely generate multiple commands, each one dedicated to a user-defined quantity (e.g. position vector, velocity vector, rotation matrix). The user can then call the generated commands within math-mode environments to typeset a concise representation of the quantity.
 %
-% For instance, |\Pos[\dot]{s}{b}{w}\Transposed| produces
+% For instance, |\Pos[\dot]{s}{b}{w}\Tran| produces
 % \begin{equation*} 
-%  \resizebox{1cm}{!}{$\Pos[\dot]{s}{b}{w}\Transposed$}
+%  \resizebox{1cm}{!}{$\Pos[\dot]{s}{b}{w}\Tran$}
 % \end{equation*}
-% which very concisely represents the time-derivative of the position vector of subject $s$ with respect to basis $b$ when expressed in coordinate system $w$. When typing the keystrokes, the user can think: \textit{position of $s$ with respect to $b$ expressed in $w$, transposed}. Except for the accent, the order in which the elements are typed respects the order in which they can be spoken, making it easier to remember the order of the arguments.  
+% which very concisely represents the time-derivative of the transposed position vector of subject $s$ with respect to basis $b$ when expressed in coordinate system $w$. When typing the keystrokes, the user can think: \textit{position of $s$ with respect to $b$ expressed in $w$, transposed}. Except for the accent, the order in which the elements are typed respects the order in which they can be spoken, making it easier to remember the order of the arguments.  
 %
 % The \textit{subject} of a quantity is the elements to which the quantity pertains (e.g. the orientation of the subject, the velocity of the subject). The \textit{basis} is the element relative to which the quantity is observed/measured/defined (e.g. the velocity of the car/subject relative to the train/basis). A vector quantity is commonly pictured as an arrow pointing from the basis to the subject. To facilitate computations, quantities are \textit{expressed} in a \textit{coordinate system} such that they can be represented as a set of numbers. Sometime it makes sense to specify only a subset of the four elements: quantity, subject, basis, and coordinate system. This package allows the user to specify only the necessary elements. A \textit{concise mode} can also be enabled such that when the basis and coordinate system are the same, only the basis is denoted.
 %
@@ -87,9 +91,9 @@
 %     4:\SetConciseNotation \Vel{s}{b}{b} \quad
 %     5:\Vel{s}{b}{c} \quad
 %     6:\UnsetConciseNotation \Vel{s}{b}{b} \quad
-%     7:\Acc{s}{b}\Transposed \quad 
+%     7:\Acc{s}{b}\Tran \quad 
 %     8:\Acc{s}{b}^2 \quad
-%     9:\Rot{s}{b}\Inversed \quad 
+%     9:\Rot{s}{b}\Inv \quad 
 %   \end{equation*}
 % \end{verbatim}
 % to produce
@@ -100,9 +104,10 @@
 %     4:\SetConciseNotation \Vel{s}{b}{b} \quad
 %     5:\Vel{s}{b}{c} \quad
 %     6:\UnsetConciseNotation \Vel{s}{b}{b} \quad
-%     7:\Acc{s}{b}\Transposed \quad 
-%     8:\Acc{s}{b}^2 \quad
-%     9:\Rot{s}{b}\Inversed \quad 
+%     7:\Acc{W}{b}\Tran \quad 
+%     8:\Acc{W}{b}^2 \quad
+%     9:\Rot{W}{b}\Inv \quad 
+%     \Mm{W}{W}{W}\Inv \Ww{W}{W}{W}\Tran \Vel\Conj \Vel\Herm
 %   \end{equation*}
 % where the concise notation was enabled for items 4 and 5 but disabled for element 6 (notice the difference). Also note that command |\Rot| was used even though it was not defined in the preamble. This is because the package comes with a few pre-defined quantities: |\Pos|, |\Rot|, and |\Pose|.
 %
@@ -141,21 +146,21 @@
 % \textbf{Description}:\\
 % Informs the package that the concise notation should not be used. This is equivalent to |\SetConciseNotation{\BooleanFalse}| and is the default behaviour.
 %
-% \vspace{5mm}\DescribeMacro{\Transposed}
+% \vspace{5mm}\DescribeMacro{\Tran}
 % \hspace{-6.5mm} Macro that typesets a $\cdot^\mathsf{T}$ in the right super-script position to denote the transpose\
-% as in $\Pos{a}{b}{c}\Transposed$.
+% as in $\Pos{a}{b}{c}\Tran$.
 %
-% \vspace{5mm}\DescribeMacro{\Inversed}
+% \vspace{5mm}\DescribeMacro{\Inv}
 % \hspace{-6.5mm} Macro that typesets a $\cdot^{-1}$ in the right super-script position to denote the inverse\
-% as in $\Pos{a}{b}{c}\Inversed$.
+% as in $\Pos{a}{b}{c}\Inv$.
 %
-% \vspace{5mm}\DescribeMacro{\Hermitian}
+% \vspace{5mm}\DescribeMacro{\Herm}
 % \hspace{-6.5mm} Macro that typesets a $\cdot^\mathsf{H}$ in the right super-script position to denote the Hermitian\
-% as in $\Rot{a}{b}\Hermitian$.
+% as in $\Rot{a}{b}\Herm$.
 %
-% \vspace{5mm}\DescribeMacro{\ComplexConjugate}
+% \vspace{5mm}\DescribeMacro{\Conj}
 % \hspace{-6.5mm} Macro that typesets a $\cdot^\ast$ in the right super-script position to denote the complex conjugate\
-% as in $\Pos\ComplexConjugate$.
+% as in $\Pos\Conj$.
 %
 % \MaybeStop{}
 %
@@ -171,22 +176,27 @@
 %    \begin{macrocode}
 \usepackage{xparse}
 \usepackage{mathtools}
-\NewDocumentCommand{\SetConciseNotation}{g}%
-{%
+
+%This box is used to measure the width of the post-script
+\newsavebox{\RN@postbox}
+\newlength{\RN@postboxwd}
+
+\NewDocumentCommand{\SetConciseNotation}{g}
+{
     \newif\IfRN@C
-    \IfNoValueTF{#1}%
-    {%
-        \RN@Ctrue%
-    }%
-    {%
-        \IfBooleanTF{#1}%
-        {%
-            \RN@Ctrue%
-        }%
-        {%
-            \RN@Cfalse%
-        }%
-    }%
+    \IfNoValueTF{#1}
+    {
+        \RN@Ctrue
+    }
+    {
+        \IfBooleanTF{#1}
+        {
+            \RN@Ctrue
+        }
+        {
+            \RN@Cfalse
+        }
+    }
 }
 %    \end{macrocode}
 % \end{macro}
@@ -212,85 +222,147 @@
 % \textbf{Description}:\\
 % Defines a typesetting command from arguments. Main typesetting routine that should not be needed by the end-user. Instead, the end-user should use |\NewRigidNotation| to define typesetting commands. If the basis and coordinate system are the same, the coordinate system is omitted when the |RN@C| keyword is set.
 %    \begin{macrocode}
-\NewDocumentCommand{\RN@makecmd}{omggg}%
-{%
-    \IfNoValueTF{#1}{\def\RN@symb{\boldsymbol{#2}}}{\def\RN@symb{#1{\boldsymbol{#2}}}}%
-    \IfNoValueTF{#3}%
+\NewDocumentCommand{\RN@makecmd}{omggg}
+{
+    \def\RN@prespace{0.08em}
+    \def\RN@postspace{0.26em}
+    \IfNoValueTF{#1}{\def\RN@symb{\boldsymbol{#2}}}{\def\RN@symb{#1{\boldsymbol{#2}}}}
+    \IfNoValueTF{#3}
     {%subject is not specified
-        \IfNoValueTF{#4}%
+        \IfNoValueTF{#4}
         {%basis is not specified
-            \IfNoValueTF{#5}%
+            \IfNoValueTF{#5}
             {%subject, basis and coordinate system are not specified
-                \RN@symb%
-            }%
+                \RN@symb
+            }
             {%subject and basis are not specified, coordinate system is specified
-                \RN@symb_{#5}%
-                \prescript{#5}{}{\RN@symb}%
-            }%
-        }%
+                \hspace{\RN@prespace}
+                \prescript{#5}{}{
+                    \hspace{-\RN@prespace}
+                    \RN@symb
+                }
+            }
+        }
         {%basis is specified
             \IfNoValueTF{#5}%
             {%basis is specified, subject and coordinate system are not specified
-                \prescript{}{#4}{\RN@symb}%
-            }%
+                \hspace{\RN@prespace}
+                \prescript{}{#4}{
+                    \hspace{-\RN@prespace}
+                    \RN@symb
+                }
+            }
             {%basis and coordinate system are specified, subject is not specified
-                \IfEq{#4}{#5}%
-                {%
-                    \IfRN@C%
+                \IfEq{#4}{#5}
+                {
+                    \IfRN@C
                     {%basis and coordinate system are the same and RN@C is set
-                        \prescript{}{#4}{\RN@symb}%
-                    }%
-                    {%
-                        \prescript{#5}{#4}{\RN@symb}%
-                    }%
-                }%
-                {%
-                    \prescript{#5}{#4}{\RN@symb}%
-                }%
-            }%
-        }%
-    }%
-    {%subject is specified
-        \IfNoValueTF{#4}%
-        {%basis is not specified
-            \IfNoValueTF{#5}%
-            {%subject is specified, basis and coordinate system are not specified
-                \prescript{}{}{\RN@symb}\hspace{-0.5ex}\prescript{}{#3}{}%
-            }%
-            {%basis is not specified, subject and coordinate system are specified
-                \prescript{#5}{}{\RN@symb}\hspace{-0.5ex}\prescript{}{#3}{}%
-            }%
-        }%
-        {%basis is specified
-            \IfNoValueTF{#5}%
-            {%subject and basis are specified, coordinate system is not specified
-                \prescript{}{#4}{\RN@symb}\hspace{-0.5ex}\prescript{}{#3}{}%
-            }%
-            {%subject, basis, and coordinate system are specified
-                \def\RN@argfour{#4}%
-                \def\RN@argfive{#5}%
-                \ifx\RN@argfour\RN@argfive%
-                {%
-                    \IfRN@C%
-                    {%basis and coordinate system are the same and RN@C is set
-                        \prescript{}{#4}{\RN@symb}\hspace{-0.5ex}\prescript{}{#3}{}%
-                    }%
-                    \else%
-                    {%
-                        \prescript{#5}{#4}{\RN@symb}\hspace{-0.5ex}\prescript{}{#3}{}%
-                    }%
-                    \fi%
-                }%
-                \else%
-                {%
-                    \prescript{#5}{#4}{\RN@symb}\hspace{-0.5ex}\prescript{}{#3}{}%
-                }%
-                \fi%
-            }%
-        }%
+                        \hspace{\RN@prespace}
+                        \prescript{}{#4}{
+                            \hspace{-\RN@prespace}
+                            \RN@symb
+                        }
+                    }
+                    {
+                        \hspace{\RN@prespace}
+                        \prescript{#5}{#4}{
+                            \hspace{-\RN@prespace}
+                            \RN@symb
+                        }
+                    }
+                }
+                {
+                    \hspace{\RN@prespace}
+                    \prescript{#5}{#4}{
+                        \hspace{-\RN@prespace}
+                        \RN@symb
+                    }
+                }
+            }
+        }
+        %If there is no subject, no space is needed on the right of the symbol
+        \setlength{\RN@postboxwd}{0pt}
     }
-    %If the following command is an exponent-type command, we bring it closer to the symbol
-    \@ifnextchar^{\hspace{-1ex}}{}%
+    {%subject is specified
+        \IfNoValueTF{#4}
+        {%basis is not specified
+            \IfNoValueTF{#5}
+            {%subject is specified, basis and coordinate system are not specified
+                \RN@symb
+                \hspace{-\RN@postspace}
+                \prescript{}{#3}{}
+            }
+            {%basis is not specified, subject and coordinate system are specified
+                \hspace{\RN@prespace}
+                \prescript{#5}{}{
+                    \hspace{-\RN@prespace}
+                    \RN@symb
+                }
+                \hspace{-\RN@postspace}
+                \prescript{}{#3}{}
+            }
+        }
+        {%basis is specified
+            \IfNoValueTF{#5}
+            {%subject and basis are specified, coordinate system is not specified
+                \hspace{\RN@prespace}
+                \prescript{}{#4}{
+                    \hspace{-\RN@prespace}
+                    \RN@symb
+                }
+                \hspace{-\RN@postspace}
+                \prescript{}{#3}{}
+            }
+            {%subject, basis, and coordinate system are specified
+                \def\RN@argfour{#4}
+                \def\RN@argfive{#5}
+                \ifx\RN@argfour\RN@argfive
+                {
+                    \IfRN@C
+                    {%basis and coordinate system are the same and RN@C is set
+                        \hspace{\RN@prespace}
+                        \prescript{}{#4}{
+                            \hspace{-\RN@prespace}
+                            \RN@symb
+                        }
+                        \hspace{-\RN@postspace}
+                        \prescript{}{#3}{}
+                    }
+                    \else
+                    {
+                        \hspace{\RN@prespace}
+                        \prescript{#5}{#4}{
+                            \hspace{-\RN@prespace}
+                            \RN@symb
+                        }
+                        \hspace{-\RN@postspace}
+                        \prescript{}{#3}{}
+                    }
+                    \fi
+                }
+                \else
+                {
+                    \hspace{\RN@prespace}
+                    \prescript{#5}{#4}{
+                        \hspace{-\RN@prespace}
+                        \RN@symb
+                    }
+                    \hspace{-\RN@postspace}
+                    \prescript{}{#3}{}
+                }
+                \fi
+            }
+        }
+        %If there is a subject, we need to know the width
+        %of the symbol to bring the exponent closer
+        \sbox{\RN@postbox}{$#3$}
+        \setlength{\RN@postboxwd}{\wd\RN@postbox}
+        \addtolength{\RN@postboxwd}{-2pt}
+    }
+    %If the following command is an exponent-type command, 
+    %we bring it closer to the symbol.
+    %The next line has to be the last of the macro
+    \@ifnextchar^{\hspace{-\RN@postboxwd}}{}
 }
 %    \end{macrocode}
 % \end{macro}
@@ -317,34 +389,70 @@
 % \end{macro}
 %
 %
-% \begin{macro}{\Transposed}
-% Macro that typesets a $\mathsf{T}$ in the right super-script position, closer to the quantity than normal, and with a smaller font size.
+% \begin{macro}{\Tran}
+% Macro that typesets a $\mathsf{T}$ in the right super-script position, closer to the quantity than normal, and with a smaller font size. 
 %    \begin{macrocode}
-\def\Transposed{^{\hspace{-1ex}\scriptscriptstyle\mathsf{T}}}
+\def\Tran{%
+    \ifnum \RN@postboxwd>0%
+        \hspace{-\RN@postboxwd}%
+        \mathmakebox[\RN@postboxwd][l]{%
+            {}^{\scriptscriptstyle\mathsf{T}}%
+        }%
+    \else%
+        ^{\scriptscriptstyle\mathsf{T}}%
+    \fi%
+}
 %    \end{macrocode}
 % \end{macro}
 %
 %
-% \begin{macro}{\Inversed}
+% \begin{macro}{\Inv}
 % Macro that typesets a $\mathsf{-1}$ in the right super-script position, closer to the quantity than normal, and with a smaller font size.
 %    \begin{macrocode}
-\def\Inversed{^{\hspace{-1ex}\scriptscriptstyle{-1}}}
+\def\Inv{%
+    \ifnum \RN@postboxwd>0%
+        \hspace{-\RN@postboxwd}%
+        \mathmakebox[\RN@postboxwd][l]{%
+            {}^{\scriptscriptstyle{-1}}%
+        }%
+    \else%
+        ^{\scriptscriptstyle{-1}}%
+    \fi%
+}
 %    \end{macrocode}
 % \end{macro}
 %
 %
-% \begin{macro}{\Hermitian}
+% \begin{macro}{\Herm}
 % Macro that typesets a $\mathsf{H}$ in the right super-script position, closer to the quantity than normal, and with a smaller font size.
 %    \begin{macrocode}
-\def\Hermitian{^{\hspace{-1ex}\scriptscriptstyle\mathsf{H}}}
+\def\Herm{%
+    \ifnum \RN@postboxwd>0%
+        \hspace{-\RN@postboxwd}%
+        \mathmakebox[\RN@postboxwd][l]{%
+            {}^{\scriptscriptstyle\mathsf{H}}%
+        }%
+    \else%
+        ^{\scriptscriptstyle\mathsf{H}}%
+    \fi%
+}
 %    \end{macrocode}
 % \end{macro}
 %
 %
-% \begin{macro}{\ComplexConjugate}
+% \begin{macro}{\Conj}
 % Macro that typesets a $\ast$ in the right super-script position, closer to the quantity than normal, and with a smaller font size.
 %    \begin{macrocode}
-\def\ComplexConjugate{^{\scriptscriptstyle\ast}}
+\def\Conj{%
+    \ifnum \RN@postboxwd>0%
+        \hspace{-\RN@postboxwd}%
+        \mathmakebox[\RN@postboxwd][l]{%
+            {}^{\scriptscriptstyle\ast}%
+        }%
+    \else%
+        ^{\scriptscriptstyle\ast}%
+    \fi%
+}
 %    \end{macrocode}
 % \end{macro}
 %
