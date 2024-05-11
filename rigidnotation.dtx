@@ -25,8 +25,6 @@
 \usepackage{rigidnotation}
 \NewRigidNotation{Vel}{v}
 \NewRigidNotation{Acc}{a}
-\NewRigidNotation{Mm}{M}
-\NewRigidNotation{Ww}{W}
 \setlength{\fboxsep}{0pt}
 \setlength{\fboxrule}{0.1pt}
 \EnableCrossrefs
@@ -106,8 +104,7 @@
 %     6:\UnsetConciseNotation \Vel{s}{b}{b} \quad
 %     7:\Acc{W}{b}\Tran \quad 
 %     8:\Acc{W}{b}^2 \quad
-%     9:\Rot{W}{b}\Inv \quad 
-%     \Mm{W}{W}{W}\Inv \Ww{W}{W}{W}\Tran \Vel\Conj \Vel\Herm
+%     9:\Rot{W}{b}\Inv
 %   \end{equation*}
 % where the concise notation was enabled for items 4 and 5 but disabled for element 6 (notice the difference). Also note that command |\Rot| was used even though it was not defined in the preamble. This is because the package comes with a few pre-defined quantities: |\Pos|, |\Rot|, and |\Pose|.
 %
@@ -180,6 +177,8 @@
 %This box is used to measure the width of the post-script
 \newsavebox{\RN@postbox}
 \newlength{\RN@postboxwd}
+\newsavebox{\RN@expbox}
+\newlength{\RN@expboxwd}
 
 \NewDocumentCommand{\SetConciseNotation}{g}
 {
@@ -225,7 +224,7 @@
 \NewDocumentCommand{\RN@makecmd}{omggg}
 {
     \def\RN@prespace{0.08em}
-    \def\RN@postspace{0.26em}
+    \def\RN@postspace{0.08em}
     \IfNoValueTF{#1}{\def\RN@symb{\boldsymbol{#2}}}{\def\RN@symb{#1{\boldsymbol{#2}}}}
     \IfNoValueTF{#3}
     {%subject is not specified
@@ -357,7 +356,6 @@
         %of the symbol to bring the exponent closer
         \sbox{\RN@postbox}{$#3$}
         \setlength{\RN@postboxwd}{\wd\RN@postbox}
-        \addtolength{\RN@postboxwd}{-2pt}
     }
     %If the following command is an exponent-type command, 
     %we bring it closer to the symbol.
@@ -393,11 +391,20 @@
 % Macro that typesets a $\mathsf{T}$ in the right super-script position, closer to the quantity than normal, and with a smaller font size. 
 %    \begin{macrocode}
 \def\Tran{%
+    \sbox{\RN@expbox}{${\scriptscriptstyle\mathsf{T}}$}%
+    \setlength{\RN@expboxwd}{\wd\RN@expbox}%
     \ifnum \RN@postboxwd>0%
-        \hspace{-\RN@postboxwd}%
-        \mathmakebox[\RN@postboxwd][l]{%
-            {}^{\scriptscriptstyle\mathsf{T}}%
-        }%
+        \ifnum \RN@postboxwd>\RN@expboxwd%
+            \hspace{-\RN@postboxwd}%
+            \mathmakebox[\RN@postboxwd][l]{%
+                {}^{\scriptscriptstyle\mathsf{T}}%
+            }%
+        \else%
+            \hspace{-\RN@postboxwd}%
+            \mathmakebox[\RN@expboxwd][l]{%
+                {}^{\scriptscriptstyle\mathsf{T}}%
+            }%
+        \fi%
     \else%
         ^{\scriptscriptstyle\mathsf{T}}%
     \fi%
@@ -410,11 +417,20 @@
 % Macro that typesets a $\mathsf{-1}$ in the right super-script position, closer to the quantity than normal, and with a smaller font size.
 %    \begin{macrocode}
 \def\Inv{%
+    \sbox{\RN@expbox}{${\scriptscriptstyle{-1}}$}%
+    \setlength{\RN@expboxwd}{\wd\RN@expbox}%
     \ifnum \RN@postboxwd>0%
-        \hspace{-\RN@postboxwd}%
-        \mathmakebox[\RN@postboxwd][l]{%
-            {}^{\scriptscriptstyle{-1}}%
-        }%
+        \ifnum \RN@postboxwd>\RN@expboxwd%
+            \hspace{-\RN@postboxwd}%
+            \mathmakebox[\RN@postboxwd][l]{%
+                {}^{\scriptscriptstyle{-1}}%
+            }%
+        \else%
+            \hspace{-\RN@postboxwd}%
+            \mathmakebox[\RN@expboxwd][l]{%
+                {}^{\scriptscriptstyle{-1}}%
+            }%
+        \fi%
     \else%
         ^{\scriptscriptstyle{-1}}%
     \fi%
@@ -427,11 +443,20 @@
 % Macro that typesets a $\mathsf{H}$ in the right super-script position, closer to the quantity than normal, and with a smaller font size.
 %    \begin{macrocode}
 \def\Herm{%
+    \sbox{\RN@expbox}{${\scriptscriptstyle\mathsf{H}}$}%
+    \setlength{\RN@expboxwd}{\wd\RN@expbox}%
     \ifnum \RN@postboxwd>0%
-        \hspace{-\RN@postboxwd}%
-        \mathmakebox[\RN@postboxwd][l]{%
-            {}^{\scriptscriptstyle\mathsf{H}}%
-        }%
+        \ifnum \RN@postboxwd>\RN@expboxwd%
+            \hspace{-\RN@postboxwd}%
+            \mathmakebox[\RN@postboxwd][l]{%
+                {}^{\scriptscriptstyle\mathsf{H}}%
+            }%
+        \else%
+            \hspace{-\RN@postboxwd}%
+            \mathmakebox[\RN@expboxwd][l]{%
+                {}^{\scriptscriptstyle\mathsf{H}}%
+            }%
+        \fi%
     \else%
         ^{\scriptscriptstyle\mathsf{H}}%
     \fi%
@@ -444,11 +469,20 @@
 % Macro that typesets a $\ast$ in the right super-script position, closer to the quantity than normal, and with a smaller font size.
 %    \begin{macrocode}
 \def\Conj{%
+    \sbox{\RN@expbox}{${\scriptscriptstyle\ast}$}%
+    \setlength{\RN@expboxwd}{\wd\RN@expbox}%
     \ifnum \RN@postboxwd>0%
-        \hspace{-\RN@postboxwd}%
-        \mathmakebox[\RN@postboxwd][l]{%
-            {}^{\scriptscriptstyle\ast}%
-        }%
+        \ifnum \RN@postboxwd>\RN@expboxwd%
+            \hspace{-\RN@postboxwd}%
+            \mathmakebox[\RN@postboxwd][l]{%
+                {}^{\scriptscriptstyle\ast}%
+            }%
+        \else%
+            \hspace{-\RN@postboxwd}%
+            \mathmakebox[\RN@expboxwd][l]{%
+                {}^{\scriptscriptstyle\ast}%
+            }%
+        \fi%
     \else%
         ^{\scriptscriptstyle\ast}%
     \fi%

@@ -21,6 +21,8 @@
 
 \newsavebox{\RN@postbox}
 \newlength{\RN@postboxwd}
+\newsavebox{\RN@expbox}
+\newlength{\RN@expboxwd}
 
 \NewDocumentCommand{\SetConciseNotation}{g}
 {
@@ -43,7 +45,7 @@
 \NewDocumentCommand{\RN@makecmd}{omggg}
 {
     \def\RN@prespace{0.08em}
-    \def\RN@postspace{0.26em}
+    \def\RN@postspace{0.08em}
     \IfNoValueTF{#1}{\def\RN@symb{\boldsymbol{#2}}}{\def\RN@symb{#1{\boldsymbol{#2}}}}
     \IfNoValueTF{#3}
     {%subject is not specified
@@ -175,7 +177,6 @@
         %of the symbol to bring the exponent closer
         \sbox{\RN@postbox}{$#3$}
         \setlength{\RN@postboxwd}{\wd\RN@postbox}
-        \addtolength{\RN@postboxwd}{-2pt}
     }
     %If the following command is an exponent-type command,
     %we bring it closer to the symbol.
@@ -190,41 +191,77 @@
     }%
 }
 \def\Tran{%
+    \sbox{\RN@expbox}{${\scriptscriptstyle\mathsf{T}}$}%
+    \setlength{\RN@expboxwd}{\wd\RN@expbox}%
     \ifnum \RN@postboxwd>0%
-        \hspace{-\RN@postboxwd}%
-        \mathmakebox[\RN@postboxwd][l]{%
-            {}^{\scriptscriptstyle\mathsf{T}}%
-        }%
+        \ifnum \RN@postboxwd>\RN@expboxwd%
+            \hspace{-\RN@postboxwd}%
+            \mathmakebox[\RN@postboxwd][l]{%
+                {}^{\scriptscriptstyle\mathsf{T}}%
+            }%
+        \else%
+            \hspace{-\RN@postboxwd}%
+            \mathmakebox[\RN@expboxwd][l]{%
+                {}^{\scriptscriptstyle\mathsf{T}}%
+            }%
+        \fi%
     \else%
         ^{\scriptscriptstyle\mathsf{T}}%
     \fi%
 }
 \def\Inv{%
+    \sbox{\RN@expbox}{${\scriptscriptstyle{-1}}$}%
+    \setlength{\RN@expboxwd}{\wd\RN@expbox}%
     \ifnum \RN@postboxwd>0%
-        \hspace{-\RN@postboxwd}%
-        \mathmakebox[\RN@postboxwd][l]{%
-            {}^{\scriptscriptstyle{-1}}%
-        }%
+        \ifnum \RN@postboxwd>\RN@expboxwd%
+            \hspace{-\RN@postboxwd}%
+            \mathmakebox[\RN@postboxwd][l]{%
+                {}^{\scriptscriptstyle{-1}}%
+            }%
+        \else%
+            \hspace{-\RN@postboxwd}%
+            \mathmakebox[\RN@expboxwd][l]{%
+                {}^{\scriptscriptstyle{-1}}%
+            }%
+        \fi%
     \else%
         ^{\scriptscriptstyle{-1}}%
     \fi%
 }
 \def\Herm{%
+    \sbox{\RN@expbox}{${\scriptscriptstyle\mathsf{H}}$}%
+    \setlength{\RN@expboxwd}{\wd\RN@expbox}%
     \ifnum \RN@postboxwd>0%
-        \hspace{-\RN@postboxwd}%
-        \mathmakebox[\RN@postboxwd][l]{%
-            {}^{\scriptscriptstyle\mathsf{H}}%
-        }%
+        \ifnum \RN@postboxwd>\RN@expboxwd%
+            \hspace{-\RN@postboxwd}%
+            \mathmakebox[\RN@postboxwd][l]{%
+                {}^{\scriptscriptstyle\mathsf{H}}%
+            }%
+        \else%
+            \hspace{-\RN@postboxwd}%
+            \mathmakebox[\RN@expboxwd][l]{%
+                {}^{\scriptscriptstyle\mathsf{H}}%
+            }%
+        \fi%
     \else%
         ^{\scriptscriptstyle\mathsf{H}}%
     \fi%
 }
 \def\Conj{%
+    \sbox{\RN@expbox}{${\scriptscriptstyle\ast}$}%
+    \setlength{\RN@expboxwd}{\wd\RN@expbox}%
     \ifnum \RN@postboxwd>0%
-        \hspace{-\RN@postboxwd}%
-        \mathmakebox[\RN@postboxwd][l]{%
-            {}^{\scriptscriptstyle\ast}%
-        }%
+        \ifnum \RN@postboxwd>\RN@expboxwd%
+            \hspace{-\RN@postboxwd}%
+            \mathmakebox[\RN@postboxwd][l]{%
+                {}^{\scriptscriptstyle\ast}%
+            }%
+        \else%
+            \hspace{-\RN@postboxwd}%
+            \mathmakebox[\RN@expboxwd][l]{%
+                {}^{\scriptscriptstyle\ast}%
+            }%
+        \fi%
     \else%
         ^{\scriptscriptstyle\ast}%
     \fi%
