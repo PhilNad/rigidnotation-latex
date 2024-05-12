@@ -21,7 +21,7 @@ This package depends on [mathtools](https://ctan.org/pkg/mathtools) and [xparse]
 Copyright (C) 2024 Philippe Nadeau
 
 This file may be distributed and/or modified under the
-conditions of the LaTeX Project Public License, either version 1.3
+conditions of the LaTeX Project Public License, either version 1.3c
 of this license or (at your option) any later version.
 The latest version of this license is in:
 
