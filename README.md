@@ -6,8 +6,7 @@ This package is [available on CTAN](https://ctan.org/pkg/rigidnotation), and a P
 
 ## Local Installation
 If you want to install the package manually on your local computer, you can follow the steps outlined below.
-1. Run `kpsewhich -var-value TEXMFHOME` to get the path to your TeX package home.
-Assuming that your TeX package home is `$TEXHOME`,
+1. Run `` TEXMFHOME=`kpsewhich -var-value TEXMFHOME` `` to get the path to your TeX package home.
 2. Run `mkdir -p $TEXHOME/tex/latex/rigidnotation/` to create a directory for this package.
 3. Run `tex rigidnotation.ins` to generate the `rigidnotation.sty` macro file.
 3. Run `cp rigidnotation.sty $TEXHOME/tex/latex/rigidnotation/` to install the package.

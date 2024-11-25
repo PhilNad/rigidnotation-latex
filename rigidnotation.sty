@@ -15,16 +15,12 @@
 %% and version 1.3c or later is part of all distributions of
 %% LaTeX version 2008-05-04 or later.
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{rigidnotation}[2024/05/13 1.0.0 Rigid Notation]
+\ProvidesPackage{rigidnotation}[2024/11/25 1.1.0 Rigid Notation]
 \usepackage{xparse}
 \usepackage{mathtools}
 
-\newsavebox{\RN@postbox}
-\newlength{\RN@postboxwd}
-\newsavebox{\RN@expbox}
-\newlength{\RN@expboxwd}
-\def\RN@prespace{0.08em}
-\def\RN@postspace{0.23em}
+\def\RN@prespace{0.0em}
+\def\RN@postspace{0.0em}
 
 \NewDocumentCommand{\SetConciseNotation}{g}
 {
@@ -42,6 +38,14 @@
             \RN@Cfalse
         }
     }
+}
+\NewDocumentCommand{\ShrinkPreSpace}{m}
+{
+    \def\RN@prespace{#1}
+}
+\NewDocumentCommand{\ShrinkPostSpace}{m}
+{
+    \def\RN@postspace{#1}
 }
 \def\UnsetConciseNotation{\SetConciseNotation{\BooleanFalse}}
 \NewDocumentCommand{\RN@makecmd}{omggg}
@@ -100,8 +104,6 @@
                 }
             }
         }
-        %If there is no subject, no space is needed on the right of the symbol
-        \setlength{\RN@postboxwd}{0pt}
     }
     {%subject is specified
         \IfNoValueTF{#4}
@@ -110,7 +112,7 @@
             {%subject is specified, basis and coordinate system are not specified
                 \RN@symb
                 \hspace{-\RN@postspace}
-                \prescript{}{#3}{}
+                _{#3}
             }
             {%basis is not specified, subject and coordinate system are specified
                 \hspace{\RN@prespace}
@@ -119,7 +121,7 @@
                     \RN@symb
                 }
                 \hspace{-\RN@postspace}
-                \prescript{}{#3}{}
+                _{#3}
             }
         }
         {%basis is specified
@@ -131,57 +133,43 @@
                     \RN@symb
                 }
                 \hspace{-\RN@postspace}
-                \prescript{}{#3}{}
+                _{#3}
             }
             {%subject, basis, and coordinate system are specified
-                \def\RN@argfour{#4}
-                \def\RN@argfive{#5}
-                \ifx\RN@argfour\RN@argfive
-                {
+                \def\RN@argfour{#4}%
+                \def\RN@argfive{#5}%
+                \ifx\RN@argfour\RN@argfive%
                     \IfRN@C
-                    {%basis and coordinate system are the same and RN@C is set
+                        %Concise notation is desired, omit the coordinate system
                         \hspace{\RN@prespace}
                         \prescript{}{#4}{
                             \hspace{-\RN@prespace}
                             \RN@symb
                         }
                         \hspace{-\RN@postspace}
-                        \prescript{}{#3}{}
-                    }
+                        _{#3}
                     \else
-                    {
+                        %Concise notation is NOT desired
                         \hspace{\RN@prespace}
                         \prescript{#5}{#4}{
                             \hspace{-\RN@prespace}
                             \RN@symb
                         }
                         \hspace{-\RN@postspace}
-                        \prescript{}{#3}{}
-                    }
+                        _{#3}
                     \fi
-                }
                 \else
-                {
                     \hspace{\RN@prespace}
                     \prescript{#5}{#4}{
                         \hspace{-\RN@prespace}
                         \RN@symb
                     }
                     \hspace{-\RN@postspace}
-                    \prescript{}{#3}{}
-                }
+                    _{#3}
                 \fi
             }
         }
-        %If there is a subject, we need to know the width
-        %of the symbol to bring the exponent closer
-        \sbox{\RN@postbox}{$#3$}
-        \setlength{\RN@postboxwd}{\wd\RN@postbox}
     }
-    %If the following command is an exponent-type command,
-    %we bring it closer to the symbol.
-    %The next line has to be the last of the macro
-    \@ifnextchar^{\hspace{\RN@postspace}\hspace{-\RN@postboxwd}}{}
 }
 \NewDocumentCommand{\NewRigidNotation}{mm}%
 {%
@@ -190,82 +178,10 @@
         \expandafter\csname RN@makecmd\endcsname[##1]{#2}{##2}{##3}{##4}%
     }%
 }
-\def\Tran{%
-    \sbox{\RN@expbox}{${\scriptscriptstyle\mathsf{T}}$}%
-    \setlength{\RN@expboxwd}{\wd\RN@expbox}%
-    \ifnum \RN@postboxwd>0%
-        \hspace{\RN@postspace}%
-        \hspace{-\RN@postboxwd}%
-        \ifnum \RN@postboxwd>\RN@expboxwd%
-            \mathmakebox[\RN@postboxwd][l]{%
-                {}^{\scriptscriptstyle\mathsf{T}}%
-            }%
-        \else%
-            \mathmakebox[\RN@expboxwd][l]{%
-                {}^{\scriptscriptstyle\mathsf{T}}%
-            }%
-        \fi%
-    \else%
-        ^{\scriptscriptstyle\mathsf{T}}%
-    \fi%
-}
-\def\Inv{%
-    \sbox{\RN@expbox}{${\scriptscriptstyle{-1}}$}%
-    \setlength{\RN@expboxwd}{\wd\RN@expbox}%
-    \ifnum \RN@postboxwd>0%
-        \hspace{\RN@postspace}%
-        \hspace{-\RN@postboxwd}%
-        \ifnum \RN@postboxwd>\RN@expboxwd%
-            \mathmakebox[\RN@postboxwd][l]{%
-                {}^{\scriptscriptstyle{-1}}%
-            }%
-        \else%
-            \mathmakebox[\RN@expboxwd][l]{%
-                {}^{\scriptscriptstyle{-1}}%
-            }%
-        \fi%
-    \else%
-        ^{\scriptscriptstyle{-1}}%
-    \fi%
-}
-\def\Herm{%
-    \sbox{\RN@expbox}{${\scriptscriptstyle\mathsf{H}}$}%
-    \setlength{\RN@expboxwd}{\wd\RN@expbox}%
-    \ifnum \RN@postboxwd>0%
-        \hspace{\RN@postspace}%
-        \hspace{-\RN@postboxwd}%
-        \ifnum \RN@postboxwd>\RN@expboxwd%
-            \mathmakebox[\RN@postboxwd][l]{%
-                {}^{\scriptscriptstyle\mathsf{H}}%
-            }%
-        \else%
-            \mathmakebox[\RN@expboxwd][l]{%
-                {}^{\scriptscriptstyle\mathsf{H}}%
-            }%
-        \fi%
-    \else%
-        ^{\scriptscriptstyle\mathsf{H}}%
-    \fi%
-}
-\def\Conj{%
-    \sbox{\RN@expbox}{${\scriptscriptstyle\ast}$}%
-    \setlength{\RN@expboxwd}{\wd\RN@expbox}%
-    \ifnum \RN@postboxwd>0%
-        \hspace{\RN@postspace}%
-        \hspace{-\RN@postboxwd}%
-        \ifnum \RN@postboxwd>\RN@expboxwd%
-            \mathmakebox[\RN@postboxwd][l]{%
-                {}^{\scriptscriptstyle\ast}%
-            }%
-        \else%
-            \mathmakebox[\RN@expboxwd][l]{%
-                {}^{\scriptscriptstyle\ast}%
-            }%
-        \fi%
-    \else%
-        ^{\scriptscriptstyle\ast}%
-    \fi%
-}
+\def\Tran{^{\scriptscriptstyle\mathsf{T}}}
+\def\Inv{^{\scriptscriptstyle{-1}}}
+\def\Herm{^{\scriptscriptstyle\mathsf{H}}}
+\def\Conj{^{\scriptscriptstyle\ast}}
 \NewRigidNotation{Pos}{p}
 \NewRigidNotation{Rot}{R}
 \NewRigidNotation{Pose}{T}
