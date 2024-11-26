@@ -50,7 +50,7 @@
 \def\UnsetConciseNotation{\SetConciseNotation{\BooleanFalse}}
 \NewDocumentCommand{\RN@makecmd}{omggg}
 {
-    \IfNoValueTF{#1}{\def\RN@symb{\mathbf{#2}}}{\def\RN@symb{#1{\mathbf{#2}}}}
+  \IfNoValueTF{#1}{\def\RN@symb{\mathbf{#2}}}{\def\RN@symb{#1{\mathbf{#2}}}}
     \IfNoValueTF{#3}
     {%subject is not specified
         \IfNoValueTF{#4}
@@ -60,47 +60,37 @@
                 \RN@symb
             }
             {%subject and basis are not specified, coordinate system is specified
-                \hspace{\RN@prespace}
-                \prescript{#5}{}{
-                    \hspace{-\RN@prespace}
-                    \RN@symb
-                }
+                \prescript{#5}{}{\vphantom{#2}}
+                \hspace{-\RN@prespace}
+                \RN@symb
             }
         }
         {%basis is specified
             \IfNoValueTF{#5}%
             {%basis is specified, subject and coordinate system are not specified
-                \hspace{\RN@prespace}
-                \prescript{}{#4}{
-                    \hspace{-\RN@prespace}
-                    \RN@symb
-                }
+                \prescript{}{#4}{\vphantom{#2}}
+                \hspace{-\RN@prespace}
+                \RN@symb
             }
             {%basis and coordinate system are specified, subject is not specified
                 \IfEq{#4}{#5}
                 {
                     \IfRN@C
                     {%basis and coordinate system are the same and RN@C is set
-                        \hspace{\RN@prespace}
-                        \prescript{}{#4}{
-                            \hspace{-\RN@prespace}
-                            \RN@symb
-                        }
-                    }
-                    {
-                        \hspace{\RN@prespace}
-                        \prescript{#5}{#4}{
-                            \hspace{-\RN@prespace}
-                            \RN@symb
-                        }
-                    }
-                }
-                {
-                    \hspace{\RN@prespace}
-                    \prescript{#5}{#4}{
+                        \prescript{}{#4}{\vphantom{#2}}
                         \hspace{-\RN@prespace}
                         \RN@symb
                     }
+                    {
+                        \prescript{#5}{#4}{\vphantom{#2}}
+                        \hspace{-\RN@prespace}
+                        \RN@symb
+                    }
+                }
+                {
+                    \prescript{#5}{#4}{\vphantom{#2}}
+                    \hspace{-\RN@prespace}
+                    \RN@symb
                 }
             }
         }
@@ -112,28 +102,24 @@
             {%subject is specified, basis and coordinate system are not specified
                 \RN@symb
                 \hspace{-\RN@postspace}
-                _{#3}
+                {\vphantom{#2}}_{#3}
             }
             {%basis is not specified, subject and coordinate system are specified
-                \hspace{\RN@prespace}
-                \prescript{#5}{}{
-                    \hspace{-\RN@prespace}
-                    \RN@symb
-                }
+                \prescript{#5}{}{\vphantom{#2}}
+                \hspace{-\RN@prespace}
+                \RN@symb
                 \hspace{-\RN@postspace}
-                _{#3}
+                {\vphantom{#2}}_{#3}
             }
         }
         {%basis is specified
             \IfNoValueTF{#5}
             {%subject and basis are specified, coordinate system is not specified
-                \hspace{\RN@prespace}
-                \prescript{}{#4}{
-                    \hspace{-\RN@prespace}
-                    \RN@symb
-                }
+                \prescript{}{#4}{\vphantom{#2}}
+                \hspace{-\RN@prespace}
+                \RN@symb
                 \hspace{-\RN@postspace}
-                _{#3}
+                {\vphantom{#2}}_{#3}
             }
             {%subject, basis, and coordinate system are specified
                 \def\RN@argfour{#4}%
@@ -141,31 +127,25 @@
                 \ifx\RN@argfour\RN@argfive%
                     \IfRN@C
                         %Concise notation is desired, omit the coordinate system
-                        \hspace{\RN@prespace}
-                        \prescript{}{#4}{
-                            \hspace{-\RN@prespace}
-                            \RN@symb
-                        }
-                        \hspace{-\RN@postspace}
-                        _{#3}
-                    \else
-                        %Concise notation is NOT desired
-                        \hspace{\RN@prespace}
-                        \prescript{#5}{#4}{
-                            \hspace{-\RN@prespace}
-                            \RN@symb
-                        }
-                        \hspace{-\RN@postspace}
-                        _{#3}
-                    \fi
-                \else
-                    \hspace{\RN@prespace}
-                    \prescript{#5}{#4}{
+                        \prescript{}{#4}{\vphantom{#2}}
                         \hspace{-\RN@prespace}
                         \RN@symb
-                    }
+                        \hspace{-\RN@postspace}
+                        {\vphantom{1}}_{#3}
+                    \else
+                        %Concise notation is NOT desired
+                        \prescript{#5}{#4}{\vphantom{#2}}
+                        \hspace{-\RN@prespace}
+                        \RN@symb
+                        \hspace{-\RN@postspace}
+                        {\vphantom{1}}_{#3}
+                    \fi
+                \else
+                    \prescript{#5}{#4}{\vphantom{#2}}
+                    \hspace{-\RN@prespace}
+                    \RN@symb
                     \hspace{-\RN@postspace}
-                    _{#3}
+                    {\vphantom{1}}_{#3}
                 \fi
             }
         }
