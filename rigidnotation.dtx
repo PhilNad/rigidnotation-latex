@@ -41,7 +41,8 @@
 % \def\margument#1{\texttt{\{\meta{#1}\}}}
 %
 %
-% \changes{v1.1}{2024-11-25}{Fixed spacing issues with exponents.}
+% \changes{v1.1.2}{2024-11-26}{Using non-italic math font for the quantity symbol such that overset decorators are centered.}
+% \changes{v1.1.1}{2024-11-25}{Fixed spacing issues with exponents.}
 % \changes{v1.0}{2024-05-13}{Initial version}
 %
 % \GetFileInfo{rigidnotation.sty}
@@ -263,7 +264,7 @@
 %    \begin{macrocode}
 \NewDocumentCommand{\RN@makecmd}{omggg}
 {
-    \IfNoValueTF{#1}{\def\RN@symb{\boldsymbol{#2}}}{\def\RN@symb{#1{\boldsymbol{#2}}}}
+    \IfNoValueTF{#1}{\def\RN@symb{\mathbf{#2}}}{\def\RN@symb{#1{\mathbf{#2}}}}
     \IfNoValueTF{#3}
     {%subject is not specified
         \IfNoValueTF{#4}

@@ -50,7 +50,7 @@
 \def\UnsetConciseNotation{\SetConciseNotation{\BooleanFalse}}
 \NewDocumentCommand{\RN@makecmd}{omggg}
 {
-    \IfNoValueTF{#1}{\def\RN@symb{\boldsymbol{#2}}}{\def\RN@symb{#1{\boldsymbol{#2}}}}
+    \IfNoValueTF{#1}{\def\RN@symb{\mathbf{#2}}}{\def\RN@symb{#1{\mathbf{#2}}}}
     \IfNoValueTF{#3}
     {%subject is not specified
         \IfNoValueTF{#4}
